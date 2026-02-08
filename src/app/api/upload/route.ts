@@ -60,8 +60,15 @@ export async function POST(req: NextRequest) {
     });
   } catch (err) {
     console.error('Upload error:', err);
+    const message = err instanceof Error ? err.message : '';
+    if (message.includes('central directory') || message.includes('zip')) {
+      return NextResponse.json(
+        { error: '파일이 손상되었거나 올바른 DOCX 형식이 아닙니다. 파일을 확인해 주세요.' },
+        { status: 400 }
+      );
+    }
     return NextResponse.json(
-      { error: '파일 업로드 중 오류가 발생했습니다.' },
+      { error: `파일 업로드 중 오류가 발생했습니다: ${message || '알 수 없는 오류'}` },
       { status: 500 }
     );
   }

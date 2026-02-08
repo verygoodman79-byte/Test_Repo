@@ -1,6 +1,9 @@
 // ============================================================
 // File Parser - Extract text from PDF, TXT, DOCX
 // ============================================================
+import fs from 'fs';
+import path from 'path';
+import os from 'os';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const pdfParse = require('pdf-parse');
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -30,8 +33,15 @@ function parseTxt(buffer: Buffer): string {
 }
 
 async function parseDocx(buffer: Buffer): Promise<string> {
-  const result = await mammoth.extractRawText({ buffer });
-  return result.value;
+  // Write buffer to temp file, then read via mammoth (more reliable than passing buffer directly)
+  const tmpFile = path.join(os.tmpdir(), `upload_${Date.now()}.docx`);
+  try {
+    fs.writeFileSync(tmpFile, buffer);
+    const result = await mammoth.extractRawText({ path: tmpFile });
+    return result.value;
+  } finally {
+    try { fs.unlinkSync(tmpFile); } catch { /* ignore */ }
+  }
 }
 
 export function getFileType(filename: string): string {
