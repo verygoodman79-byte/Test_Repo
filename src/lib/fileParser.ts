@@ -4,10 +4,6 @@
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const pdfParse = require('pdf-parse');
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const mammoth = require('mammoth');
 
 export async function parseFile(buffer: Buffer, fileType: string): Promise<string> {
   switch (fileType) {
@@ -24,6 +20,9 @@ export async function parseFile(buffer: Buffer, fileType: string): Promise<strin
 }
 
 async function parsePdf(buffer: Buffer): Promise<string> {
+  // Use pdf-parse-new (no DOM/canvas dependency, works in serverless)
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const pdfParse = require('pdf-parse-new');
   const data = await pdfParse(buffer);
   return data.text;
 }
@@ -33,6 +32,8 @@ function parseTxt(buffer: Buffer): string {
 }
 
 async function parseDocx(buffer: Buffer): Promise<string> {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const mammoth = require('mammoth');
   // Write buffer to temp file, then read via mammoth (more reliable than passing buffer directly)
   const tmpFile = path.join(os.tmpdir(), `upload_${Date.now()}.docx`);
   try {

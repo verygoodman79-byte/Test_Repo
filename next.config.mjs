@@ -1,13 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  serverExternalPackages: ['pdf-parse', 'mammoth'],
   experimental: {
-    serverComponentsExternalPackages: ['pdf-parse', 'mammoth'],
+    serverComponentsExternalPackages: ['pdf-parse-new', 'mammoth'],
   },
   webpack: (config, { isServer }) => {
     if (isServer) {
       config.externals = config.externals || [];
-      config.externals.push('pdf-parse', 'mammoth');
+      config.externals.push('pdf-parse-new', 'mammoth');
     }
     config.resolve.fallback = {
       ...config.resolve.fallback,
