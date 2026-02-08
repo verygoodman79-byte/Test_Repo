@@ -1,0 +1,16 @@
+run = "npm run dev"
+entrypoint = "src/app/page.tsx"
+
+[nix]
+channel = "stable-24_05"
+
+[env]
+NEXTAUTH_URL = "https://$REPL_SLUG.$REPL_OWNER.repl.co"
+NEXTAUTH_SECRET = "script-review-agent-replit-secret"
+
+[deployment]
+run = ["sh", "-c", "npm run build && npm start"]
+
+[[ports]]
+localPort = 3000
+externalPort = 80

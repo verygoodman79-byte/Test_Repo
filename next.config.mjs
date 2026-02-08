@@ -12,6 +12,8 @@ const nextConfig = {
     };
     return config;
   },
+  // Allow external hosts (CodeSandbox, Replit, etc.)
+  allowedDevOrigins: ['*'],
 };
 
 export default nextConfig;
