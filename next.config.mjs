@@ -18,8 +18,14 @@ const nextConfig = {
     };
     return config;
   },
-  // Allow external hosts (CodeSandbox, Replit, etc.)
-  allowedDevOrigins: ['*'],
+  // Allow external hosts (CodeSandbox, Replit, Vercel preview, etc.)
+  allowedDevOrigins: [
+    '*.csb.app',
+    '*.codesandbox.io',
+    '*.repl.co',
+    '*.replit.dev',
+    'localhost',
+  ],
 };
 
 export default nextConfig;
