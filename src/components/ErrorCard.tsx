@@ -37,20 +37,20 @@ export default function ErrorCard({
   const config = severityConfig[severity] || severityConfig.medium;
 
   const typeLabels: Record<string, string> = {
-    scene_order: '씬 순서',
-    missing_transition: '전환 누락',
-    incomplete_scene: '불완전한 씬',
+    missing_section: '섹션 누락',
+    section_order: '섹션 순서',
+    incomplete_section: '불완전한 섹션',
     format_violation: '형식 위반',
-    pacing_issue: '페이싱',
+    coherence_issue: '일관성 문제',
     grammar: '문법',
     punctuation: '구두점',
     style: '문체',
     redundancy: '중복 표현',
     awkward_phrasing: '어색한 표현',
-    inconsistent_behavior: '행동 불일치',
-    missing_motivation: '동기 부재',
+    inconsistent_description: '설명 불일치',
+    missing_info: '정보 누락',
     continuity_error: '연속성 오류',
-    dialogue_mismatch: '대사 불일치',
+    summary_mismatch: '요약 불일치',
     description_conflict: '설명 충돌',
   };
 

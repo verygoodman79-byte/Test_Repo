@@ -15,7 +15,7 @@ export async function GET(
 
     const script = getScriptById(params.id);
     if (!script) {
-      return NextResponse.json({ error: '대본을 찾을 수 없습니다.' }, { status: 404 });
+      return NextResponse.json({ error: '리포트를 찾을 수 없습니다.' }, { status: 404 });
     }
 
     const userId = (session.user as { id?: string }).id || '';
@@ -43,7 +43,7 @@ export async function DELETE(
 
     const script = getScriptById(params.id);
     if (!script) {
-      return NextResponse.json({ error: '대본을 찾을 수 없습니다.' }, { status: 404 });
+      return NextResponse.json({ error: '리포트를 찾을 수 없습니다.' }, { status: 404 });
     }
 
     const userId = (session.user as { id?: string }).id || '';
@@ -53,7 +53,7 @@ export async function DELETE(
 
     deleteScript(params.id);
 
-    return NextResponse.json({ message: '대본이 삭제되었습니다.' });
+    return NextResponse.json({ message: '리포트가 삭제되었습니다.' });
   } catch {
     return NextResponse.json({ error: '서버 오류가 발생했습니다.' }, { status: 500 });
   }

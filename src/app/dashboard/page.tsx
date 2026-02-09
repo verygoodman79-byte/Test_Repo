@@ -11,7 +11,7 @@ export default function DashboardHome() {
         <h1 className="text-3xl font-bold mb-2">
           안녕하세요, {session?.user?.name || '사용자'}님
         </h1>
-        <p className="text-slate-400 mb-8">대본을 업로드하여 자동 검토를 시작하세요.</p>
+        <p className="text-slate-400 mb-8">분석 리포트를 업로드하여 자동 검토를 시작하세요.</p>
 
         {/* Guide cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -22,10 +22,10 @@ export default function DashboardHome() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
                 </svg>
               </div>
-              <h3 className="font-semibold">1. 대본 업로드</h3>
+              <h3 className="font-semibold">1. 리포트 업로드</h3>
             </div>
             <p className="text-sm text-slate-400">
-              왼쪽 사이드바에서 &quot;대본 업로드&quot; 버튼을 클릭하여 PDF, TXT, DOCX 형식의 대본 파일을 업로드하세요.
+              왼쪽 사이드바에서 &quot;리포트 업로드&quot; 버튼을 클릭하여 PDF, TXT, DOCX 형식의 분석 리포트를 업로드하세요.
             </p>
           </div>
 
@@ -39,7 +39,7 @@ export default function DashboardHome() {
               <h3 className="font-semibold">2. 자동 분석</h3>
             </div>
             <p className="text-sm text-slate-400">
-              &quot;분석 시작&quot; 버튼을 클릭하면 대본의 구조, 문법, 오타, 인물 일관성을 자동으로 검토합니다.
+              &quot;분석 시작&quot; 버튼을 클릭하면 리포트의 구조, 문법, 오타, 인물 일관성을 자동으로 검토합니다.
             </p>
           </div>
 
@@ -67,7 +67,7 @@ export default function DashboardHome() {
               <h3 className="font-semibold">4. PDF 다운로드</h3>
             </div>
             <p className="text-sm text-slate-400">
-              분석 결과를 PDF 리포트로 다운로드하여 팀과 공유하거나 보관하세요.
+              분석 결과를 PDF로 다운로드하여 팀과 공유하거나 보관하세요.
             </p>
           </div>
         </div>
@@ -77,12 +77,12 @@ export default function DashboardHome() {
           <h3 className="font-semibold mb-4 text-blue-400">검토 항목</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {[
-              { icon: '🔍', title: '구조 검토', desc: '씬 순서, 전환, 형식 일관성' },
+              { icon: '🔍', title: '구조 검토', desc: '섹션 구성, 누락, 형식 일관성' },
               { icon: '📝', title: '문법 검토', desc: '맞춤법, 문장 구조, 문체 일관성' },
               { icon: '✏️', title: '오타 검토', desc: '단어 오타, 반복 단어, 띄어쓰기' },
-              { icon: '👥', title: '인물 일관성', desc: '등장인물 설명, 대사, 연속성 검토' },
-              { icon: '📊', title: '통계 분석', desc: '단어 수, 대사 비율, 씬 길이 분석' },
-              { icon: '🎬', title: '씬 분석', desc: '씬별 등장인물, 대사/액션 비율' },
+              { icon: '👥', title: '인물 일관성', desc: '캐릭터 요약과 본문 간 일관성 검토' },
+              { icon: '📊', title: '통계 분석', desc: '단어 수, 섹션별 길이, 인물 분포' },
+              { icon: '📋', title: '섹션 분석', desc: '섹션별 품질 평가 및 문제점 분석' },
             ].map((item, i) => (
               <div key={i} className="flex items-start gap-3 p-3 bg-slate-700/30 rounded-lg">
                 <span className="text-lg">{item.icon}</span>

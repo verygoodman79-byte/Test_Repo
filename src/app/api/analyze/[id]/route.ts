@@ -19,7 +19,7 @@ export async function POST(
 
     const script = getScriptById(params.id);
     if (!script) {
-      return NextResponse.json({ error: '대본을 찾을 수 없습니다.' }, { status: 404 });
+      return NextResponse.json({ error: '리포트를 찾을 수 없습니다.' }, { status: 404 });
     }
 
     const userId = (session.user as { id?: string }).id || '';

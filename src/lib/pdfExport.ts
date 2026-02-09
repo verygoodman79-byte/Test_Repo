@@ -45,7 +45,7 @@ export function exportToPdf(analysis: AnalysisResult, scriptTitle: string) {
   // ---- Title Page ----
   doc.setFontSize(24);
   doc.setTextColor(59, 130, 246);
-  doc.text('Script Review Report', pageWidth / 2, 50, { align: 'center' });
+  doc.text('Report Review Result', pageWidth / 2, 50, { align: 'center' });
 
   doc.setFontSize(16);
   doc.setTextColor(80, 80, 80);
@@ -59,7 +59,7 @@ export function exportToPdf(analysis: AnalysisResult, scriptTitle: string) {
   // Summary stats
   y = 110;
   const stats = [
-    `Total Scenes: ${analysis.summary.totalScenes}`,
+    `Total Sections: ${analysis.summary.totalSections}`,
     `Total Characters: ${analysis.summary.totalCharacters}`,
     `Estimated Reading Time: ${analysis.summary.estimatedReadingTime}`,
     `Total Words: ${analysis.statistics.totalWords.toLocaleString()}`,
@@ -140,17 +140,16 @@ export function exportToPdf(analysis: AnalysisResult, scriptTitle: string) {
     });
   }
 
-  // ---- Scene Analysis ----
-  if (analysis.sceneAnalysis.length > 0) {
-    addTitle('Scene Analysis (씬 분석)', 14);
+  // ---- Section Analysis ----
+  if (analysis.sectionAnalysis.length > 0) {
+    addTitle('Section Analysis (섹션 분석)', 14);
 
-    analysis.sceneAnalysis.forEach((scene) => {
+    analysis.sectionAnalysis.forEach((section) => {
       checkPage(25);
-      addText(`Scene ${scene.sceneNumber}: ${scene.title}`, 11, [59, 130, 246]);
-      addText(`   Location: ${scene.location} | Characters: ${scene.characters.join(', ') || 'N/A'}`, 9, [120, 120, 120]);
-      addText(`   Words: ${scene.wordCount} | Dialogue: ${scene.dialogueRatio}% | Action: ${scene.actionRatio}%`, 9, [120, 120, 120]);
-      if (scene.issues.length > 0) {
-        addText(`   Issues: ${scene.issues.join('; ')}`, 9, [200, 100, 0]);
+      addText(`Section ${section.sectionNumber}: ${section.title} [${section.type}]`, 11, [59, 130, 246]);
+      addText(`   Characters: ${section.characters.join(', ') || 'N/A'} | Words: ${section.wordCount} | Quality: ${section.quality}`, 9, [120, 120, 120]);
+      if (section.issues.length > 0) {
+        addText(`   Issues: ${section.issues.join('; ')}`, 9, [200, 100, 0]);
       }
       y += 2;
     });
@@ -161,14 +160,14 @@ export function exportToPdf(analysis: AnalysisResult, scriptTitle: string) {
 
   addText(`Total Words: ${analysis.statistics.totalWords.toLocaleString()}`, 10);
   addText(`Total Lines: ${analysis.statistics.totalLines.toLocaleString()}`, 10);
-  addText(`Dialogue: ${analysis.statistics.dialoguePercentage}% | Action: ${analysis.statistics.actionPercentage}%`, 10);
-  addText(`Average Scene Length: ${analysis.statistics.averageSceneLength} words`, 10);
+  addText(`Short Summary Length: ${analysis.statistics.shortSummaryLength} words`, 10);
+  addText(`Medium Summary Length: ${analysis.statistics.mediumSummaryLength} words`, 10);
 
-  if (analysis.statistics.characterDialogueDistribution.length > 0) {
+  if (analysis.statistics.characterMentionDistribution.length > 0) {
     y += 3;
-    addText('Character Dialogue Distribution:', 11, [59, 130, 246]);
-    analysis.statistics.characterDialogueDistribution.slice(0, 10).forEach(char => {
-      addText(`   ${char.character}: ${char.percentage}% (${char.lineCount} lines)`, 10);
+    addText('Character Mention Distribution:', 11, [59, 130, 246]);
+    analysis.statistics.characterMentionDistribution.slice(0, 10).forEach(char => {
+      addText(`   ${char.character}: ${char.percentage}% (${char.mentionCount} mentions)`, 10);
     });
   }
 

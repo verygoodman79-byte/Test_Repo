@@ -1,5 +1,5 @@
 // ============================================================
-// Script Review Agent - Type Definitions
+// Script Report Review Agent - Type Definitions
 // ============================================================
 
 export interface User {
@@ -24,21 +24,21 @@ export interface Script {
 
 export interface AnalysisResult {
   scriptId: string;
-  summary: ScriptSummary;
+  summary: ReportSummary;
   structuralErrors: StructuralError[];
   grammarErrors: GrammarError[];
   typos: Typo[];
   characterErrors: CharacterError[];
-  sceneAnalysis: SceneAnalysis[];
-  statistics: ScriptStatistics;
+  sectionAnalysis: SectionAnalysis[];
+  statistics: ReportStatistics;
   overallScore: number; // 0-100
   createdAt: string;
 }
 
-export interface ScriptSummary {
+export interface ReportSummary {
   title: string;
   genre: string;
-  totalScenes: number;
+  totalSections: number;
   totalCharacters: number;
   estimatedReadingTime: string;
   synopsis: string;
@@ -46,12 +46,12 @@ export interface ScriptSummary {
 
 export interface StructuralError {
   id: string;
-  type: 'scene_order' | 'missing_transition' | 'incomplete_scene' | 'format_violation' | 'pacing_issue';
+  type: 'missing_section' | 'section_order' | 'incomplete_section' | 'format_violation' | 'coherence_issue';
   severity: 'low' | 'medium' | 'high' | 'critical';
-  location: string; // e.g., "Scene 3, Line 45"
+  location: string;
   description: string;
   suggestion: string;
-  context: string; // surrounding text
+  context: string;
 }
 
 export interface GrammarError {
@@ -75,37 +75,33 @@ export interface Typo {
 export interface CharacterError {
   id: string;
   characterName: string;
-  type: 'inconsistent_behavior' | 'missing_motivation' | 'continuity_error' | 'dialogue_mismatch' | 'description_conflict';
+  type: 'inconsistent_description' | 'missing_info' | 'continuity_error' | 'summary_mismatch' | 'description_conflict';
   severity: 'low' | 'medium' | 'high' | 'critical';
   location: string;
   description: string;
-  evidence: string; // the specific text/reasoning as evidence
+  evidence: string;
   suggestion: string;
 }
 
-export interface SceneAnalysis {
-  sceneNumber: number;
+export interface SectionAnalysis {
+  sectionNumber: number;
   title: string;
-  location: string;
+  type: string; // 작품제목, 캐릭터 요약, 짧은 요약, 중간 요약
   characters: string[];
-  dialogueRatio: number; // percentage
-  actionRatio: number;
   wordCount: number;
-  mood: string;
+  quality: string; // 품질 평가
   issues: string[];
 }
 
-export interface ScriptStatistics {
+export interface ReportStatistics {
   totalWords: number;
   totalLines: number;
-  totalScenes: number;
+  totalSections: number;
   totalCharacters: number;
-  dialoguePercentage: number;
-  actionPercentage: number;
-  averageSceneLength: number;
-  longestScene: { scene: number; words: number };
-  shortestScene: { scene: number; words: number };
-  characterDialogueDistribution: { character: string; percentage: number; lineCount: number }[];
+  sectionWordCounts: { section: string; words: number }[];
+  characterMentionDistribution: { character: string; percentage: number; mentionCount: number }[];
+  shortSummaryLength: number;
+  mediumSummaryLength: number;
 }
 
 // Dashboard filter types
