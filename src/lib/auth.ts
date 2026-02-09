@@ -6,19 +6,6 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
 import { getUserByEmail } from './db';
 
-// Auto-detect URL for cloud environments (CodeSandbox, Replit)
-function getBaseUrl() {
-  if (process.env.NEXTAUTH_URL) return process.env.NEXTAUTH_URL;
-  if (process.env.REPL_SLUG) return `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co`;
-  if (process.env.CODESANDBOX_HOST) return `https://${process.env.CODESANDBOX_HOST}`;
-  return 'http://localhost:3000';
-}
-
-// Set NEXTAUTH_URL dynamically if not provided
-if (!process.env.NEXTAUTH_URL) {
-  process.env.NEXTAUTH_URL = getBaseUrl();
-}
-
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -49,6 +36,18 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: 'jwt',
     maxAge: 24 * 60 * 60, // 24 hours
+  },
+  cookies: {
+    sessionToken: {
+      name: 'next-auth.session-token',
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        // Don't set secure in dev so cookies work on http
+        secure: process.env.NODE_ENV === 'production',
+      },
+    },
   },
   callbacks: {
     async jwt({ token, user }) {
