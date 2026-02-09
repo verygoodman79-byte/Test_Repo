@@ -23,21 +23,42 @@ function getGeminiClient() {
   return new GoogleGenerativeAI(apiKey);
 }
 
+const GEMINI_MODELS = [
+  'gemini-2.5-flash-preview-05-20',
+  'gemini-2.5-flash',
+  'gemini-2.0-flash',
+];
+
 async function callGemini(prompt: string): Promise<string> {
   const genAI = getGeminiClient();
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-preview-04-17' });
+  let lastError: Error | null = null;
 
-  const result = await model.generateContent({
-    contents: [{ role: 'user', parts: [{ text: prompt }] }],
-    generationConfig: {
-      temperature: 0.3,
-      maxOutputTokens: 8192,
-      responseMimeType: 'application/json',
-    },
-  });
+  for (const modelName of GEMINI_MODELS) {
+    try {
+      console.log(`[Gemini] Trying model: ${modelName}`);
+      const model = genAI.getGenerativeModel({ model: modelName });
 
-  const response = result.response;
-  return response.text();
+      const result = await model.generateContent({
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        generationConfig: {
+          temperature: 0.3,
+          maxOutputTokens: 8192,
+          responseMimeType: 'application/json',
+        },
+      });
+
+      const response = result.response;
+      const text = response.text();
+      console.log(`[Gemini] Success with model: ${modelName}, response length: ${text.length}`);
+      return text;
+    } catch (err) {
+      lastError = err instanceof Error ? err : new Error(String(err));
+      console.error(`[Gemini] Model ${modelName} failed:`, lastError.message);
+      continue;
+    }
+  }
+
+  throw new Error(`All Gemini models failed. Last error: ${lastError?.message}`);
 }
 
 // ============================================================
