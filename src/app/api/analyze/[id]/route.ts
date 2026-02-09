@@ -4,6 +4,9 @@ import { authOptions } from '@/lib/auth';
 import { getScriptById, updateScript, createAnalysis } from '@/lib/db';
 import { analyzeScript } from '@/lib/analyzer';
 
+// LLM analysis can take time - extend timeout
+export const maxDuration = 120; // seconds
+
 export async function POST(
   req: NextRequest,
   { params }: { params: { id: string } }
@@ -27,8 +30,8 @@ export async function POST(
     // Update status to analyzing
     updateScript(params.id, { status: 'analyzing' });
 
-    // Run analysis
-    const result = analyzeScript(script.content, script.title);
+    // Run LLM-based analysis (6 parallel Gemini calls)
+    const result = await analyzeScript(script.content, script.title);
     result.scriptId = params.id;
 
     // Save analysis
@@ -47,8 +50,9 @@ export async function POST(
   } catch (err) {
     console.error('Analysis error:', err);
     updateScript(params.id, { status: 'error' });
+    const message = err instanceof Error ? err.message : '알 수 없는 오류';
     return NextResponse.json(
-      { error: '분석 중 오류가 발생했습니다.' },
+      { error: `분석 중 오류가 발생했습니다: ${message}` },
       { status: 500 }
     );
   }
