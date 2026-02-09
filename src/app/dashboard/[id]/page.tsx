@@ -116,7 +116,7 @@ export default function ScriptDashboard() {
     { key: 'grammar', label: '문법 오류', count: analysis?.grammarErrors.length },
     { key: 'typos', label: '오타', count: analysis?.typos.length },
     { key: 'characters', label: '인물 일관성', count: analysis?.characterErrors.length },
-    { key: 'sections', label: '섹션 분석', count: analysis?.sectionAnalysis.length },
+    { key: 'sections', label: '섹션 분석', count: analysis?.sectionAnalysis?.length },
     { key: 'stats', label: '통계' },
   ];
 
@@ -255,7 +255,7 @@ export default function ScriptDashboard() {
             {activeTab === 'grammar' && <GrammarTab errors={filterBySeverity(analysis.grammarErrors)} />}
             {activeTab === 'typos' && <TyposTab typos={analysis.typos} />}
             {activeTab === 'characters' && <CharactersTab errors={filterBySeverity(analysis.characterErrors)} />}
-            {activeTab === 'sections' && <SectionsTab sections={analysis.sectionAnalysis} />}
+            {activeTab === 'sections' && <SectionsTab sections={analysis.sectionAnalysis || []} />}
             {activeTab === 'stats' && <StatsTab stats={analysis.statistics} />}
           </div>
         </>
@@ -300,7 +300,7 @@ function OverviewTab({ analysis }: { analysis: AnalysisResult }) {
             </div>
             <div>
               <p className="text-xs text-slate-500">총 섹션 수</p>
-              <p className="text-sm">{analysis.summary.totalSections}개</p>
+              <p className="text-sm">{analysis.summary.totalSections ?? 0}개</p>
             </div>
             <div>
               <p className="text-xs text-slate-500">등장인물 수</p>
@@ -374,15 +374,15 @@ function OverviewTab({ analysis }: { analysis: AnalysisResult }) {
           <div className="flex items-start gap-3 p-3 bg-slate-700/30 rounded-lg">
             <div className="w-2 h-2 rounded-full bg-green-400 mt-1.5 shrink-0" />
             <p className="text-sm text-slate-300">
-              짧은 요약 <span className="font-semibold text-white">{analysis.statistics.shortSummaryLength}단어</span>,
-              중간 요약 <span className="font-semibold text-white">{analysis.statistics.mediumSummaryLength}단어</span>로 구성되어 있습니다.
+              짧은 요약 <span className="font-semibold text-white">{analysis.statistics.shortSummaryLength ?? 0}단어</span>,
+              중간 요약 <span className="font-semibold text-white">{analysis.statistics.mediumSummaryLength ?? 0}단어</span>로 구성되어 있습니다.
             </p>
           </div>
           <div className="flex items-start gap-3 p-3 bg-slate-700/30 rounded-lg">
             <div className="w-2 h-2 rounded-full bg-purple-400 mt-1.5 shrink-0" />
             <p className="text-sm text-slate-300">
               총 <span className="font-semibold text-white">{analysis.statistics.totalCharacters}명</span>의 등장인물이 언급되었으며,
-              <span className="font-semibold text-white"> {analysis.statistics.totalSections}개</span>의 섹션으로 구성되어 있습니다.
+              <span className="font-semibold text-white"> {analysis.statistics.totalSections ?? 0}개</span>의 섹션으로 구성되어 있습니다.
             </p>
           </div>
         </div>
@@ -572,20 +572,23 @@ function SectionsTab({ sections }: { sections: AnalysisResult['sectionAnalysis']
 // Statistics Tab
 // ============================================================
 function StatsTab({ stats }: { stats: AnalysisResult['statistics'] }) {
+  const sectionWordCounts = stats.sectionWordCounts || [];
+  const charDist = stats.characterMentionDistribution || [];
+
   return (
     <div className="space-y-6">
       {/* Basic stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="총 단어 수" value={stats.totalWords.toLocaleString()} color="text-blue-400"
+        <StatCard label="총 단어 수" value={(stats.totalWords ?? 0).toLocaleString()} color="text-blue-400"
           icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>}
         />
-        <StatCard label="총 줄 수" value={stats.totalLines.toLocaleString()} color="text-green-400"
+        <StatCard label="총 줄 수" value={(stats.totalLines ?? 0).toLocaleString()} color="text-green-400"
           icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>}
         />
-        <StatCard label="총 섹션 수" value={stats.totalSections} color="text-purple-400"
+        <StatCard label="총 섹션 수" value={stats.totalSections ?? 0} color="text-purple-400"
           icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>}
         />
-        <StatCard label="등장인물 수" value={stats.totalCharacters} color="text-orange-400"
+        <StatCard label="등장인물 수" value={stats.totalCharacters ?? 0} color="text-orange-400"
           icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>}
         />
       </div>
@@ -596,11 +599,11 @@ function StatsTab({ stats }: { stats: AnalysisResult['statistics'] }) {
         <div className="space-y-3">
           <div className="flex justify-between items-center p-3 bg-slate-700/30 rounded-lg">
             <span className="text-sm text-slate-400">짧은 요약</span>
-            <span className="text-sm font-medium">{stats.shortSummaryLength}단어</span>
+            <span className="text-sm font-medium">{stats.shortSummaryLength ?? 0}단어</span>
           </div>
           <div className="flex justify-between items-center p-3 bg-slate-700/30 rounded-lg">
             <span className="text-sm text-slate-400">중간 요약</span>
-            <span className="text-sm font-medium">{stats.mediumSummaryLength}단어</span>
+            <span className="text-sm font-medium">{stats.mediumSummaryLength ?? 0}단어</span>
           </div>
         </div>
       </div>
@@ -609,11 +612,11 @@ function StatsTab({ stats }: { stats: AnalysisResult['statistics'] }) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div className="card">
           <h3 className="font-semibold mb-3">섹션별 단어 수</h3>
-          {stats.sectionWordCounts.length === 0 ? (
+          {sectionWordCounts.length === 0 ? (
             <p className="text-sm text-slate-500">섹션 데이터가 없습니다.</p>
           ) : (
             <div className="space-y-2">
-              {stats.sectionWordCounts.map((sec, i) => (
+              {sectionWordCounts.map((sec, i) => (
                 <div key={i}>
                   <div className="flex justify-between text-sm mb-1">
                     <span className="text-slate-300">{sec.section}</span>
@@ -623,7 +626,7 @@ function StatsTab({ stats }: { stats: AnalysisResult['statistics'] }) {
                     <div
                       className="h-full rounded-full transition-all duration-500"
                       style={{
-                        width: `${Math.min(100, (sec.words / Math.max(...stats.sectionWordCounts.map(s => s.words), 1)) * 100)}%`,
+                        width: `${Math.min(100, (sec.words / Math.max(...sectionWordCounts.map(s => s.words), 1)) * 100)}%`,
                         backgroundColor: `hsl(${(i * 60 + 200) % 360}, 70%, 55%)`,
                       }}
                     />
@@ -637,11 +640,11 @@ function StatsTab({ stats }: { stats: AnalysisResult['statistics'] }) {
         {/* Character distribution */}
         <div className="card">
           <h3 className="font-semibold mb-3">등장인물 언급 분포</h3>
-          {stats.characterMentionDistribution.length === 0 ? (
+          {charDist.length === 0 ? (
             <p className="text-sm text-slate-500">등장인물 데이터가 없습니다.</p>
           ) : (
             <div className="space-y-2">
-              {stats.characterMentionDistribution.slice(0, 8).map((char, i) => (
+              {charDist.slice(0, 8).map((char, i) => (
                 <div key={i}>
                   <div className="flex justify-between text-sm mb-1">
                     <span className="text-slate-300">{char.character}</span>

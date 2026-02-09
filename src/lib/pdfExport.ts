@@ -59,10 +59,10 @@ export function exportToPdf(analysis: AnalysisResult, scriptTitle: string) {
   // Summary stats
   y = 110;
   const stats = [
-    `Total Sections: ${analysis.summary.totalSections}`,
-    `Total Characters: ${analysis.summary.totalCharacters}`,
-    `Estimated Reading Time: ${analysis.summary.estimatedReadingTime}`,
-    `Total Words: ${analysis.statistics.totalWords.toLocaleString()}`,
+    `Total Sections: ${analysis.summary.totalSections ?? 0}`,
+    `Total Characters: ${analysis.summary.totalCharacters ?? 0}`,
+    `Estimated Reading Time: ${analysis.summary.estimatedReadingTime ?? 'N/A'}`,
+    `Total Words: ${(analysis.statistics.totalWords ?? 0).toLocaleString()}`,
   ];
   stats.forEach(stat => {
     addText(stat, 11, [60, 60, 60]);
@@ -141,10 +141,11 @@ export function exportToPdf(analysis: AnalysisResult, scriptTitle: string) {
   }
 
   // ---- Section Analysis ----
-  if (analysis.sectionAnalysis.length > 0) {
+  const sections = analysis.sectionAnalysis || [];
+  if (sections.length > 0) {
     addTitle('Section Analysis (섹션 분석)', 14);
 
-    analysis.sectionAnalysis.forEach((section) => {
+    sections.forEach((section) => {
       checkPage(25);
       addText(`Section ${section.sectionNumber}: ${section.title} [${section.type}]`, 11, [59, 130, 246]);
       addText(`   Characters: ${section.characters.join(', ') || 'N/A'} | Words: ${section.wordCount} | Quality: ${section.quality}`, 9, [120, 120, 120]);
@@ -158,15 +159,16 @@ export function exportToPdf(analysis: AnalysisResult, scriptTitle: string) {
   // ---- Statistics ----
   addTitle('Statistics (통계)', 14);
 
-  addText(`Total Words: ${analysis.statistics.totalWords.toLocaleString()}`, 10);
-  addText(`Total Lines: ${analysis.statistics.totalLines.toLocaleString()}`, 10);
-  addText(`Short Summary Length: ${analysis.statistics.shortSummaryLength} words`, 10);
-  addText(`Medium Summary Length: ${analysis.statistics.mediumSummaryLength} words`, 10);
+  addText(`Total Words: ${(analysis.statistics.totalWords ?? 0).toLocaleString()}`, 10);
+  addText(`Total Lines: ${(analysis.statistics.totalLines ?? 0).toLocaleString()}`, 10);
+  addText(`Short Summary Length: ${analysis.statistics.shortSummaryLength ?? 0} words`, 10);
+  addText(`Medium Summary Length: ${analysis.statistics.mediumSummaryLength ?? 0} words`, 10);
 
-  if (analysis.statistics.characterMentionDistribution.length > 0) {
+  const charMentions = analysis.statistics.characterMentionDistribution || [];
+  if (charMentions.length > 0) {
     y += 3;
     addText('Character Mention Distribution:', 11, [59, 130, 246]);
-    analysis.statistics.characterMentionDistribution.slice(0, 10).forEach(char => {
+    charMentions.slice(0, 10).forEach(char => {
       addText(`   ${char.character}: ${char.percentage}% (${char.mentionCount} mentions)`, 10);
     });
   }
